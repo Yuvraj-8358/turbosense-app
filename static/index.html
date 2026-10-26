@@ -1,6 +1,275 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>TURBOSENSE | Engine Health</title><style>
-:root{color-scheme:dark;--bg:#0b1220;--panel:#131f31;--line:#263750;--text:#edf4fb;--muted:#9eb1c7;--accent:#35c5a3;--blue:#6fb5ff}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% 0,#162b40 0,transparent 40%),var(--bg);color:var(--text);font:15px/1.55 system-ui,Segoe UI,sans-serif}.wrap{max-width:980px;margin:48px auto;padding:0 20px}.eyebrow{color:var(--accent);font-size:12px;letter-spacing:.18em;font-weight:700}.hero{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:24px}h1{font-size:clamp(32px,5vw,52px);line-height:1;margin:12px 0}p{color:var(--muted)}.status,.panel{border:1px solid var(--line);border-radius:16px}.status{padding:8px 12px;color:var(--muted)}.panel{background:linear-gradient(145deg,#17263a,#111c2c);padding:24px;box-shadow:0 20px 60px #0003}.row{display:flex;gap:14px;align-items:end;margin-bottom:16px}label{display:block;color:#c7d5e5;font-size:13px;margin-bottom:7px}select,textarea,button{font:inherit;color:var(--text);border:1px solid #334962;border-radius:10px;background:#0d1725;padding:12px}select{min-width:150px}textarea{width:100%;min-height:230px;font:13px/1.5 ui-monospace,Consolas,monospace}button{background:var(--accent);color:#071a19;border:0;font-weight:750;cursor:pointer}.hint{font-size:13px}.result{margin-top:20px;display:grid;gap:10px}.card{border:1px solid var(--line);border-radius:12px;padding:16px;background:#0d1725;display:flex;justify-content:space-between}.value{font-size:24px;font-weight:700;color:var(--blue)}.health{color:var(--accent);font-weight:700;text-transform:capitalize}.error{color:#ff9c9c;white-space:pre-wrap}@media(max-width:600px){.hero{display:block}.row{align-items:stretch;flex-direction:column}}
-</style></head><body><main class="wrap"><div class="hero"><div><div class="eyebrow">PREDICTIVE MAINTENANCE · C-MAPSS</div><h1>TURBOSENSE</h1><p>Estimate remaining useful life and engine health from sensor readings.</p></div><div class="status" id="status">Connecting…</div></div><section class="panel"><div class="row"><div><label for="subset">Dataset model</label><select id="subset"><option>FD001</option><option>FD002</option><option>FD003</option><option>FD004</option></select></div><button id="predict">Run prediction</button></div><label for="rows">Sensor readings as JSON rows</label><textarea id="rows" spellcheck="false" placeholder='Paste a JSON array of row objects using the sensor names from manifest.json.'></textarea><p class="hint">Use feature names from the TURBOSENSE manifest, such as <code>op_setting_1</code>, <code>T24</code>, and <code>W32</code>. Add <code>unit</code> and <code>cycle</code> for a multi-cycle time series.</p><div id="message" class="error"></div><div id="result" class="result"></div></section><p class="hint">Model outputs are estimates from NASA C-MAPSS data, not a certified aircraft safety assessment or maintenance instruction.</p><a href="/docs">API documentation</a> · <a href="/healthz">Service status</a></main><script>
-const statusEl=document.querySelector('#status'),message=document.querySelector('#message'),result=document.querySelector('#result'),button=document.querySelector('#predict');fetch('/healthz').then(r=>r.json()).then(x=>{statusEl.textContent=x.status==='ok'?'Models ready':'Model files missing';statusEl.style.color=x.status==='ok'?'#35c5a3':'#ff9c9c'}).catch(()=>statusEl.textContent='Service unavailable');button.addEventListener('click',async()=>{message.textContent='';result.replaceChildren();let rows;try{rows=JSON.parse(document.querySelector('#rows').value);if(!Array.isArray(rows))throw Error('Input must be a JSON array of row objects.')}catch(e){message.textContent=e.message;return}button.disabled=true;try{const res=await fetch('/api/predict',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({subset:document.querySelector('#subset').value,rows})}),data=await res.json();if(!res.ok)throw Error(typeof data.detail==='string'?data.detail:JSON.stringify(data.detail));for(const p of data.predictions){const card=document.createElement('div');card.className='card';card.innerHTML='<div><div class="hint">ESTIMATED REMAINING USEFUL LIFE</div><div class="value">'+p.predicted_rul+' cycles</div></div><div><div class="hint">HEALTH STATE</div><div class="health">'+p.health+'</div></div>';result.append(card)}}catch(e){message.textContent=e.message}finally{button.disabled=false}});
-</script></body></html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TURBOSENSE | Engine health</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1220;--panel:#131f31;--line:#263750;--text:#edf4fb;--muted:#9eb1c7;--accent:#35c5a3;--blue:#6fb5ff;--danger:#ff9c9c}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at 80% 0,#162b40 0,transparent 42%),var(--bg);color:var(--text);font:15px/1.55 system-ui,Segoe UI,sans-serif}
+.wrap{max-width:1040px;margin:42px auto;padding:0 20px}
+.eyebrow{color:var(--accent);font-size:12px;letter-spacing:.18em;font-weight:700}
+.hero{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:24px}
+h1{font-size:clamp(32px,5vw,52px);line-height:1;margin:12px 0}
+p{color:var(--muted)}
+.status{border:1px solid var(--line);border-radius:999px;padding:8px 12px;color:var(--muted);white-space:nowrap}
+.panel{background:linear-gradient(145deg,#17263a,#111c2c);border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:0 20px 60px #0003}
+.row{display:flex;gap:14px;align-items:end;margin-bottom:18px}
+label{display:block;color:#c7d5e5;font-size:13px;margin-bottom:7px}
+select,input,button{font:inherit;color:var(--text);border:1px solid #334962;border-radius:10px;background:#0d1725;padding:11px 12px}
+select{min-width:150px}
+input[type=number]{width:100%;min-width:0}
+input[type=file]{width:100%;padding:14px;border-style:dashed}
+button{background:var(--accent);color:#071a19;border:0;font-weight:750;padding:12px 20px;cursor:pointer}
+button:disabled{opacity:.6;cursor:wait}
+.mode-tabs{display:flex;flex-wrap:wrap;gap:9px;margin:8px 0 14px}
+.mode-tab{background:#0d1725;color:#c7d5e5;border:1px solid #334962;padding:9px 14px}
+.mode-tab.active{background:#183c3a;color:#76e3c5;border:1px solid #35c5a3}
+.hint{font-size:13px}
+.panel-note{margin:0 0 18px}
+.sensor-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:14px 0 10px}
+.sensor-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.sensor-field{margin:0}
+.sensor-field span{display:block;font-size:12px;color:#c7d5e5;margin-bottom:5px}
+.optional-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;max-width:500px;margin-bottom:18px}
+.optional-field{margin:0}
+.file-panel{border:1px solid var(--line);border-radius:12px;padding:18px;background:#0d1725}
+.file-status{margin:12px 0 0;color:var(--accent);font-size:13px}
+.error{color:var(--danger);white-space:pre-wrap}
+.actions{display:flex;gap:12px;align-items:center;margin-top:20px}
+.secondary{background:transparent;color:#c7d5e5;border:1px solid #3b536e}
+.result{margin-top:20px;display:grid;gap:10px}
+.card{border:1px solid var(--line);border-radius:12px;padding:16px;background:#0d1725;display:flex;justify-content:space-between;align-items:center;gap:16px}
+.value{font-size:24px;font-weight:700;color:var(--blue)}
+.health{color:var(--accent);font-weight:700;text-transform:capitalize}
+.foot{font-size:12px;margin-top:18px}
+.links a{color:var(--blue);margin-right:15px}
+[hidden]{display:none!important}
+@media(max-width:760px){.sensor-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.wrap{margin:24px auto}.hero{display:block}.row{align-items:stretch;flex-direction:column}.sensor-grid,.optional-grid{grid-template-columns:1fr}.card{align-items:flex-start;flex-direction:column}.panel{padding:18px}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header class="hero">
+    <div><div class="eyebrow">PREDICTIVE MAINTENANCE · C-MAPSS</div><h1>TURBOSENSE</h1><p>Estimate remaining useful life and engine health from engine sensor readings.</p></div>
+    <div class="status" id="status">Connecting…</div>
+  </header>
+
+  <section class="panel">
+    <div class="row">
+      <div><label for="subset">Dataset model</label><select id="subset"><option>FD001</option><option>FD002</option><option>FD003</option><option>FD004</option></select></div>
+    </div>
+
+    <div class="mode-tabs" role="tablist" aria-label="Choose how to enter sensor readings">
+      <button class="mode-tab active" type="button" data-mode="manual" role="tab" aria-selected="true">Manual sensor entry</button>
+      <button class="mode-tab" type="button" data-mode="csv" role="tab" aria-selected="false">Upload CSV</button>
+      <button class="mode-tab" type="button" data-mode="word" role="tab" aria-selected="false">Upload Word (.docx)</button>
+    </div>
+
+    <section id="manualPanel">
+      <p class="hint panel-note">Enter a value for every input required by the selected dataset. The updated sensor names change automatically when you switch between FD001–FD004.</p>
+      <div class="optional-grid">
+        <label class="optional-field">Engine or unit ID (optional)<input id="unit" type="text" placeholder="e.g. 1"></label>
+        <label class="optional-field">Cycle (optional)<input id="cycle" type="number" min="0" step="any" placeholder="e.g. 120"></label>
+      </div>
+      <div class="sensor-heading"><strong>Required sensor and operating inputs</strong><span class="hint" id="featureCount">Loading fields…</span></div>
+      <div id="sensorGrid" class="sensor-grid"></div>
+    </section>
+
+    <section id="filePanel" class="file-panel" hidden>
+      <label for="upload">Select a CSV or Word document</label>
+      <input id="upload" type="file" accept=".csv,.docx">
+      <p class="hint">CSV files need a header row with the exact sensor names. Word files must be .docx and contain a table: use the first row for sensor names and one engine reading per row. Include both unit and cycle columns to choose the latest cycle per engine.</p>
+      <p class="file-status" id="fileStatus" aria-live="polite"></p>
+    </section>
+
+    <div class="actions"><button id="predict" type="button">Run prediction</button><button id="clear" class="secondary" type="button">Clear input</button></div>
+    <div id="message" class="error" role="alert"></div>
+    <div id="result" class="result" aria-live="polite"></div>
+  </section>
+
+  <p class="foot">Model outputs are estimates from NASA C-MAPSS training data. They are not a certified aircraft safety assessment or maintenance instruction.</p>
+  <div class="links"><a href="/docs">API documentation</a><a href="/healthz">Service status</a></div>
+</main>
+
+<script>
+const statusEl=document.querySelector('#status');
+const message=document.querySelector('#message');
+const result=document.querySelector('#result');
+const predictButton=document.querySelector('#predict');
+const subsetEl=document.querySelector('#subset');
+const sensorGrid=document.querySelector('#sensorGrid');
+const featureCount=document.querySelector('#featureCount');
+const manualPanel=document.querySelector('#manualPanel');
+const filePanel=document.querySelector('#filePanel');
+const uploadInput=document.querySelector('#upload');
+const fileStatus=document.querySelector('#fileStatus');
+const modeButtons=[...document.querySelectorAll('.mode-tab')];
+let manifest=null;
+let activeMode='manual';
+let uploadedRows=null;
+
+function setMessage(text){message.textContent=text||''}
+function setMode(mode){
+  activeMode=mode;
+  uploadedRows=null;
+  uploadInput.value='';
+  fileStatus.textContent='';
+  setMessage('');
+  result.replaceChildren();
+  manualPanel.hidden=mode!=='manual';
+  filePanel.hidden=mode==='manual';
+  uploadInput.accept=mode==='csv'?'.csv':mode==='word'?'.docx':'.csv,.docx';
+  modeButtons.forEach(button=>{
+    const selected=button.dataset.mode===mode;
+    button.classList.toggle('active',selected);
+    button.setAttribute('aria-selected',String(selected));
+  });
+}
+function renderSensorFields(){
+  const subset=subsetEl.value;
+  const features=manifest?.selected_models?.[subset]?.features||[];
+  sensorGrid.replaceChildren();
+  features.forEach(feature=>{
+    const label=document.createElement('label');
+    label.className='sensor-field';
+    const name=document.createElement('span');
+    name.textContent=feature;
+    const input=document.createElement('input');
+    input.type='number';
+    input.step='any';
+    input.required=true;
+    input.dataset.feature=feature;
+    input.setAttribute('aria-label',feature);
+    input.placeholder='Enter '+feature;
+    label.append(name,input);
+    sensorGrid.append(label);
+  });
+  featureCount.textContent=features.length+' required inputs';
+}
+function getManualRow(){
+  const row={};
+  const unit=document.querySelector('#unit').value.trim();
+  const cycleText=document.querySelector('#cycle').value.trim();
+  if(Boolean(unit)!==Boolean(cycleText))throw Error('Enter both Engine or unit ID and Cycle, or leave both blank.');
+  if(unit){row.unit=unit;row.cycle=Number(cycleText);if(!Number.isFinite(row.cycle))throw Error('Cycle must be a finite number.')}
+  for(const input of sensorGrid.querySelectorAll('[data-feature]')){
+    const text=input.value.trim();
+    if(text==='')throw Error('Enter a value for every required sensor and operating input.');
+    const value=Number(text);
+    if(!Number.isFinite(value))throw Error(input.dataset.feature+' must be a finite number.');
+    row[input.dataset.feature]=value;
+  }
+  return [row];
+}
+function showPredictions(data){
+  result.replaceChildren();
+  for(const prediction of data.predictions||[]){
+    const card=document.createElement('div');
+    card.className='card';
+    const rulBlock=document.createElement('div');
+    const rulLabel=document.createElement('div');
+    rulLabel.className='hint';
+    rulLabel.textContent='ESTIMATED REMAINING USEFUL LIFE';
+    const rul=document.createElement('div');
+    rul.className='value';
+    rul.textContent=prediction.predicted_rul+' cycles';
+    rulBlock.append(rulLabel,rul);
+    const healthBlock=document.createElement('div');
+    const healthLabel=document.createElement('div');
+    healthLabel.className='hint';
+    healthLabel.textContent='HEALTH STATE';
+    const health=document.createElement('div');
+    health.className='health';
+    health.textContent=prediction.health;
+    healthBlock.append(healthLabel,health);
+    card.append(rulBlock,healthBlock);
+    result.append(card);
+  }
+}
+async function parseUpload(file){
+  const form=new FormData();
+  form.append('subset',subsetEl.value);
+  form.append('file',file);
+  const response=await fetch('/api/parse-upload',{method:'POST',body:form});
+  const data=await response.json();
+  if(!response.ok)throw Error(typeof data.detail==='string'?data.detail:JSON.stringify(data.detail,null,2));
+  return data;
+}
+uploadInput.addEventListener('change',async()=>{
+  const file=uploadInput.files?.[0];
+  uploadedRows=null;
+  setMessage('');
+  result.replaceChildren();
+  if(!file){fileStatus.textContent='';return}
+  fileStatus.textContent='Reading '+file.name+'…';
+  try{
+    const data=await parseUpload(file);
+    uploadedRows=data.rows;
+    fileStatus.textContent='Ready: '+uploadedRows.length+' row(s) loaded for '+subsetEl.value+'.';
+  }catch(error){
+    fileStatus.textContent='';
+    setMessage(error.message);
+  }
+});
+modeButtons.forEach(button=>button.addEventListener('click',()=>setMode(button.dataset.mode)));
+subsetEl.addEventListener('change',()=>{
+  uploadedRows=null;
+  uploadInput.value='';
+  fileStatus.textContent='';
+  setMessage('');
+  result.replaceChildren();
+  renderSensorFields();
+});
+document.querySelector('#clear').addEventListener('click',()=>{
+  uploadedRows=null;
+  uploadInput.value='';
+  document.querySelector('#unit').value='';
+  document.querySelector('#cycle').value='';
+  sensorGrid.querySelectorAll('input').forEach(input=>input.value='');
+  fileStatus.textContent='';
+  setMessage('');
+  result.replaceChildren();
+});
+predictButton.addEventListener('click',async()=>{
+  setMessage('');
+  result.replaceChildren();
+  let rows;
+  try{
+    rows=activeMode==='manual'?getManualRow():uploadedRows;
+    if(!rows?.length)throw Error('Choose a file and wait for it to finish loading before running a prediction.');
+  }catch(error){setMessage(error.message);return}
+  predictButton.disabled=true;
+  predictButton.textContent='Predicting…';
+  try{
+    const response=await fetch('/api/predict',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({subset:subsetEl.value,rows})});
+    const data=await response.json();
+    if(!response.ok)throw Error(typeof data.detail==='string'?data.detail:JSON.stringify(data.detail,null,2));
+    showPredictions(data);
+  }catch(error){setMessage(error.message)}
+  finally{predictButton.disabled=false;predictButton.textContent='Run prediction'}
+});
+async function initialize(){
+  try{
+    const [healthResponse,manifestResponse]=await Promise.all([fetch('/healthz'),fetch('/api/manifest')]);
+    const health=await healthResponse.json();
+    if(!healthResponse.ok)throw Error('Health check failed.');
+    if(!manifestResponse.ok)throw Error('Could not load the sensor manifest.');
+    manifest=await manifestResponse.json();
+    statusEl.textContent=health.status==='ok'?'Models ready':'Model files missing';
+    statusEl.style.color=health.status==='ok'?'#35c5a3':'#ff9c9c';
+    renderSensorFields();
+  }catch(error){
+    statusEl.textContent='Service unavailable';
+    statusEl.style.color='#ff9c9c';
+    featureCount.textContent='Sensor list unavailable';
+    setMessage(error.message);
+    predictButton.disabled=true;
+  }
+}
+initialize();
+</script>
+</body>
+</html>
