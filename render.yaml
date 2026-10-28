@@ -3,7 +3,7 @@ services:
     name: turbosense
     runtime: python
     plan: free
-    buildCommand: pip install -r requirements.txt && python download_models.py
+    buildCommand: pip install -r requirements.txt && python download_models.py && python compact_models.py
     startCommand: uvicorn app:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /healthz
     envVars:

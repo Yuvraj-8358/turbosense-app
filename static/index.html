@@ -1,1 +1,336 @@
-<!doctype html> <html lang="en"> <head> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1"> <meta name="theme-color" content="#07111d"> <meta name="description" content="Predictive maintenance insights for NASA C-MAPSS turbofan engines."> <title>TURBOSENSE | Predictive maintenance</title> <style> :root{color-scheme:dark;--bg:#07111d;--surface:#0d1a29;--surface-raised:#112235;--line:#21364a;--text:#f3f7fb;--muted:#95a9bd;--mint:#8de3c4;--mint-deep:#2c9d7b;--sky:#9ccfff;--danger:#ff9e9e;--gold:#e4c58b;--radius:22px} *{box-sizing:border-box}html{min-height:100%;scroll-behavior:smooth} body{min-height:100vh;margin:0;background:radial-gradient(ellipse at 76% 8%,#153b49 0,transparent 29%),radial-gradient(ellipse at 9% 35%,#10223a 0,transparent 32%),var(--bg);color:var(--text);font:15px/1.6 Inter,"Segoe UI",system-ui,sans-serif;letter-spacing:.005em} button,input,select{font:inherit}button{cursor:pointer}a{color:inherit} .wrap{width:min(1180px,100% - 48px);margin:0 auto;padding:28px 0 36px} .topbar{height:52px;display:flex;align-items:center;justify-content:space-between;margin-bottom:62px} .brand{display:flex;align-items:center;gap:12px;text-decoration:none;font-size:14px;font-weight:800;letter-spacing:.12em}.brand-mark{width:38px;height:38px;display:grid;place-items:center;border:1px solid #2e5961;border-radius:12px;background:linear-gradient(145deg,#183a42,#102331);color:var(--mint);box-shadow:inset 0 1px #ffffff12}.brand-mark svg{width:22px;height:22px} .top-links{display:flex;align-items:center;gap:20px}.top-links a{color:#a8b8c8;text-decoration:none;font-size:13px}.top-links a:hover{color:var(--mint)} .status{display:inline-flex;align-items:center;gap:9px;border:1px solid #29423e;border-radius:999px;background:#10251f;padding:8px 13px;color:#c6eadc;font-size:12px;font-weight:650;white-space:nowrap}.status::before{content:"";width:7px;height:7px;border-radius:50%;background:#75d4a8;box-shadow:0 0 12px #75d4a899}.status.offline{border-color:#593238;background:#2b171c;color:#ffb5b5}.status.offline::before{background:#ff818a;box-shadow:0 0 12px #ff818a99} .hero{display:grid;grid-template-columns:1.2fr .8fr;align-items:center;gap:56px;margin-bottom:50px}.eyebrow{display:flex;align-items:center;gap:10px;color:var(--mint);font-size:11px;font-weight:750;letter-spacing:.2em;text-transform:uppercase}.eyebrow::before{content:"";width:23px;height:1px;background:var(--mint)} h1{margin:18px 0 15px;font-size:clamp(44px,7vw,76px);line-height:.96;letter-spacing:-.065em;font-weight:730}h1 span{display:block;color:var(--mint)}.hero-copy{max-width:560px;margin:0;color:#a8b7c6;font-size:17px;line-height:1.7}.hero-copy strong{color:#ecf4f7;font-weight:600} .hero-art{position:relative;min-height:220px;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid #24424e;border-radius:30px;background:linear-gradient(140deg,#102638dd,#0b1824dd);box-shadow:0 26px 80px #0004,inset 0 1px #ffffff0a}.hero-art::before,.hero-art::after{content:"";position:absolute;border:1px solid #71d9c31c;border-radius:50%;width:260px;height:260px}.hero-art::after{width:190px;height:190px;border-color:#71d9c333}.orbit{position:absolute;width:310px;height:96px;border:1px solid #71d9c344;border-radius:50%;transform:rotate(-28deg)}.engine-core{position:relative;z-index:1;width:104px;height:104px;display:grid;place-items:center;border:1px solid #80d9c866;border-radius:50%;background:radial-gradient(circle,#234d50 0,#112c36 58%,#0c1b28 59%);box-shadow:0 0 55px #72d9c326}.engine-core svg{width:46px;height:46px;color:var(--mint)}.orbit-dot{position:absolute;top:39px;right:calc(50% - 118px);width:11px;height:11px;border:2px solid #c3f3df;border-radius:50%;background:#51c7a0;box-shadow:0 0 18px #51c7a0}.art-label{position:absolute;bottom:20px;left:22px;color:#7692a5;font-size:10px;letter-spacing:.16em;text-transform:uppercase}.art-code{position:absolute;top:19px;right:21px;color:#7791a4;font:11px ui-monospace,monospace} .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:28px}.stat{padding:11px 14px;border-left:1px solid #2b4951}.stat strong{display:block;color:#f1f7f7;font-size:17px;letter-spacing:-.02em}.stat span{color:#8499a9;font-size:11px} .workspace{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(280px,.75fr);align-items:start;gap:20px}.panel{border:1px solid #203649;border-radius:var(--radius);background:linear-gradient(155deg,#112235ed,#0b1927f5);box-shadow:0 22px 70px #0003,inset 0 1px #ffffff0a}.form-panel{padding:27px}.panel-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;padding-bottom:20px;border-bottom:1px solid #203446}.kicker{margin:0 0 5px;color:var(--mint);font-size:10px;font-weight:750;letter-spacing:.17em;text-transform:uppercase}.panel-heading h2,.result-panel h2{margin:0;font-size:20px;letter-spacing:-.03em}.panel-heading p{margin:6px 0 0;color:var(--muted);font-size:13px} .dataset-select{min-width:145px}.field-label{display:block;margin:22px 0 8px;color:#cfdae3;font-size:12px;font-weight:650;letter-spacing:.03em}.select-wrap{position:relative}.select-wrap::after{content:"⌄";position:absolute;right:13px;top:8px;color:#91a9bb;pointer-events:none}select,input{width:100%;border:1px solid #2b4356;border-radius:11px;background:#091725;color:var(--text);padding:11px 13px;outline:none;transition:border-color .18s,box-shadow .18s,background .18s}select{appearance:none;padding-right:34px}select:focus,input:focus{border-color:#65cdb0;box-shadow:0 0 0 3px #65cdb021;background:#0b1d2b}input::placeholder{color:#61788c}.mode-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:23px 0 18px;padding:5px;border:1px solid #1e3446;border-radius:14px;background:#091623}.mode-tab{display:flex;justify-content:center;align-items:center;gap:8px;min-height:42px;padding:8px 10px;border:1px solid transparent;border-radius:10px;background:transparent;color:#9bafbf;font-size:12px;font-weight:650;transition:all .18s}.mode-tab:hover{color:#eaf7f4;background:#ffffff07}.mode-tab.active{border-color:#356258;background:linear-gradient(135deg,#1b413d,#16312f);color:#aaf0d5;box-shadow:0 3px 14px #0002}.mode-icon{font-size:15px;line-height:1} .hint{color:#8fa3b4;font-size:12px}.panel-note{margin:0 0 17px;line-height:1.65}.optional-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;max-width:560px;margin-bottom:19px}.optional-field{margin:0}.optional-field input{display:block;margin-top:6px}.sensor-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:16px 0 10px;color:#d9e3e9;font-size:12px}.count-pill{padding:5px 9px;border:1px solid #28424e;border-radius:999px;color:#9bcabd;background:#10252b;font-size:10px;white-space:nowrap}.sensor-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}.sensor-field{margin:0;min-width:0}.sensor-field span{display:block;margin-bottom:5px;color:#9fb2c0;font:11px ui-monospace,SFMono-Regular,Consolas,monospace}.sensor-field input{height:42px;padding:9px 11px;font-size:13px;font-variant-numeric:tabular-nums} .file-panel{padding:25px;border:1px dashed #3a5c69;border-radius:16px;background:linear-gradient(145deg,#102533,#0a1824);transition:border-color .2s,background .2s}.file-panel:focus-within,.file-panel:hover{border-color:#76d6bc;background:linear-gradient(145deg,#12303a,#0a1824)}.upload-symbol{width:43px;height:43px;display:grid;place-items:center;margin-bottom:14px;border:1px solid #2d5158;border-radius:13px;background:#153239;color:var(--mint);font-size:20px}.file-panel label{display:block;color:#edf5f5;font-size:14px;font-weight:650}.file-panel input[type=file]{display:block;width:100%;margin-top:12px;padding:13px;border:1px solid #2b4557;border-radius:11px;background:#091725;color:#9db1bf;font-size:12px}.file-panel input[type=file]::file-selector-button{margin-right:12px;padding:8px 11px;border:0;border-radius:7px;background:#214b48;color:#c0f0de;font-weight:650;cursor:pointer}.file-panel .hint{margin:12px 0 0;line-height:1.65}.file-status{margin:14px 0 0;color:var(--mint);font-size:12px} .error{margin-top:12px;color:var(--danger);font-size:13px;white-space:pre-wrap}.actions{display:flex;gap:10px;align-items:center;margin-top:22px}.primary{display:inline-flex;justify-content:center;align-items:center;gap:9px;min-height:46px;padding:0 19px;border:1px solid #87e1c4;border-radius:12px;background:linear-gradient(135deg,#a2ebcf,#62c5a4);color:#09231e;font-size:13px;font-weight:800;box-shadow:0 8px 24px #54c49c26;transition:transform .18s,box-shadow .18s}.primary:hover{transform:translateY(-1px);box-shadow:0 12px 30px #54c49c3d}.primary:disabled{opacity:.65;cursor:wait;transform:none}.secondary{min-height:44px;padding:0 16px;border:1px solid #31495b;border-radius:12px;background:transparent;color:#b0bfcb;font-size:12px;font-weight:650}.secondary:hover{border-color:#587385;color:#eef5f7;background:#ffffff06} .result-panel{position:sticky;top:22px;min-height:390px;padding:25px;overflow:hidden}.result-panel::before{content:"";position:absolute;top:-100px;right:-110px;width:240px;height:240px;border-radius:50%;background:#54c6a514;filter:blur(20px);pointer-events:none}.result-top{position:relative;display:flex;align-items:center;justify-content:space-between;gap:10px}.result-mark{width:36px;height:36px;display:grid;place-items:center;border:1px solid #2f4d53;border-radius:11px;background:#132b32;color:var(--mint)}.result-mark svg{width:18px;height:18px}.result-empty{position:relative;display:flex;min-height:275px;flex-direction:column;align-items:center;justify-content:center;text-align:center}.result-glyph{width:112px;height:112px;display:grid;place-items:center;margin-bottom:20px;border:1px solid #294351;border-radius:50%;background:radial-gradient(circle,#15343d 0,#102634 65%,#0d1d2b 66%);color:#7ad4b6;box-shadow:0 0 0 12px #132a351a,0 0 55px #5ac3a012}.result-glyph svg{width:42px;height:42px}.result-empty h3{margin:0;color:#dfe9ec;font-size:15px}.result-empty p{max-width:240px;margin:7px 0 0;color:#879cab;font-size:12px}.result{position:relative;display:grid;gap:11px;margin-top:22px}.card{display:flex;justify-content:space-between;align-items:center;gap:15px;padding:16px;border:1px solid #2c4c52;border-radius:15px;background:linear-gradient(135deg,#112a30,#0c1d29)}.result .card:first-child{margin-top:22px}.value{font-size:clamp(24px,3vw,32px);font-weight:750;letter-spacing:-.045em;color:#a7e9cf;font-variant-numeric:tabular-nums}.health{display:inline-flex;margin-top:7px;padding:6px 10px;border:1px solid #2c544b;border-radius:999px;background:#18352e;color:#a7e9cf;font-size:11px;font-weight:750;text-transform:capitalize}.health[data-health="critical"]{border-color:#673c3c;background:#341e24;color:#ffb2b2}.health[data-health="warning"]{border-color:#6b5737;background:#332b1c;color:#f2d393}.result .hint{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase}.result-foot{margin:14px 0 0;color:#8196a5;font-size:11px;line-height:1.6} .foot{margin:25px 0 0;color:#778c9e;font-size:11px;line-height:1.65}.footer{display:flex;justify-content:space-between;gap:16px;margin-top:25px;padding-top:18px;border-top:1px solid #182c3b;color:#708697;font-size:11px}.footer-links{display:flex;gap:16px}.footer a{color:#9bb5c5;text-decoration:none}.footer a:hover{color:var(--mint)}[hidden]{display:none!important} @media(max-width:920px){.wrap{width:min(760px,100% - 36px);padding-top:20px}.topbar{margin-bottom:42px}.hero{grid-template-columns:1fr;gap:24px;margin-bottom:34px}.hero-art{min-height:175px}.workspace{grid-template-columns:1fr}.result-panel{position:relative;top:auto;min-height:300px}.result-empty{min-height:190px}.result-glyph{width:82px;height:82px;margin-bottom:14px}.result-glyph svg{width:33px;height:33px}} @media(max-width:600px){.wrap{width:calc(100% - 28px);padding-top:12px}.topbar{margin-bottom:35px}.top-links{gap:11px}.top-links a{font-size:11px}.top-links .status{padding:7px 10px;font-size:10px}.hero{gap:21px}.hero-copy{font-size:15px}.stats{gap:4px;margin-top:20px}.stat{padding:9px 8px}.stat strong{font-size:15px}.stat span{font-size:9px}.hero-art{min-height:145px;border-radius:22px}.workspace{gap:14px}.form-panel,.result-panel{padding:19px;border-radius:18px}.panel-heading{display:block}.dataset-select{margin-top:14px}.mode-tabs{gap:4px;margin-top:18px}.mode-tab{flex-direction:column;gap:2px;padding:7px 4px;font-size:10px}.mode-icon{font-size:14px}.sensor-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.optional-grid{gap:9px}.optional-field{font-size:11px}.actions{align-items:stretch}.actions button{flex:1;padding:0 10px;font-size:12px}.footer{flex-direction:column}.footer-links{gap:13px}} @media(max-width:360px){.sensor-grid,.optional-grid{grid-template-columns:1fr}.top-links a{display:none}} @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}} </style> </head> <body> <main class="wrap"> <nav class="topbar" aria-label="Main navigation"> <a class="brand" href="/" aria-label="TURBOSENSE home"><span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3.5v7.2m0 2.6v7.2M3.5 12h7.2m2.6 0h7.2M6 6l5.1 5.1m1.8 1.8L18 18m0-12-5.1 5.1m-1.8 1.8L6 18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="12" r="3.3" stroke="currentColor" stroke-width="1.6"/></svg></span>TURBOSENSE</a> <div class="top-links"><a href="#workspace">Workspace</a><a href="/docs">API docs</a><div class="status" id="status">Connecting…</div></div> </nav> <header class="hero"> <div> <div class="eyebrow">Predictive maintenance · NASA C-MAPSS</div> <h1>Know what’s next.<span>Before it fails.</span></h1> <p class="hero-copy">Turn engine sensor readings into a clear <strong>remaining useful life estimate</strong> and an at-a-glance health state.</p> <div class="stats" aria-label="Project capabilities"><div class="stat"><strong>04</strong><span>C-MAPSS models</span></div><div class="stat"><strong>21</strong><span>Named sensors</span></div><div class="stat"><strong>03</strong><span>Input methods</span></div></div> </div> <div class="hero-art" aria-hidden="true"><div class="orbit"></div><div class="orbit-dot"></div><div class="engine-core"><svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="19" stroke="currentColor" stroke-width="1.5" opacity=".55"/><path d="M24 9v12m0 6v12M9 24h12m6 0h12M13.4 13.4l8.5 8.5m4.2 4.2 8.5 8.5m0-21.2-8.5 8.5m-4.2 4.2-8.5 8.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="24" cy="24" r="5" stroke="currentColor" stroke-width="1.7"/></svg></div><span class="art-label">Engine intelligence system</span><span class="art-code">TS / CM-04</span></div> </header> <section class="workspace" id="workspace"> <section class="panel form-panel"> <div class="panel-heading"><div><p class="kicker">Analysis workspace</p><h2>Start with an engine reading</h2><p>Choose a dataset and add your sensor data.</p></div><div class="dataset-select"><label class="field-label" for="subset">Dataset model</label><div class="select-wrap"><select id="subset"><option>FD001</option><option>FD002</option><option>FD003</option><option>FD004</option></select></div></div></div> <div class="mode-tabs" role="tablist" aria-label="Choose how to enter sensor readings"> <button class="mode-tab active" type="button" data-mode="manual" role="tab" aria-selected="true"><span class="mode-icon" aria-hidden="true">⌘</span>Manual entry</button> <button class="mode-tab" type="button" data-mode="csv" role="tab" aria-selected="false"><span class="mode-icon" aria-hidden="true">↥</span>CSV upload</button> <button class="mode-tab" type="button" data-mode="word" role="tab" aria-selected="false"><span class="mode-icon" aria-hidden="true">▤</span>Word upload</button> </div> <section id="manualPanel"> <p class="hint panel-note">Enter a value for every required input. Sensor names update automatically when you change the FD subset.</p> <div class="optional-grid"> <label class="optional-field">Engine or unit ID (optional)<input id="unit" type="text" placeholder="e.g. 1"></label> <label class="optional-field">Cycle (optional)<input id="cycle" type="number" min="0" step="any" placeholder="e.g. 120"></label> </div> <div class="sensor-heading"><strong>Sensor and operating inputs</strong><span class="count-pill" id="featureCount">Loading fields…</span></div> <div id="sensorGrid" class="sensor-grid"></div> </section> <section id="filePanel" class="file-panel" hidden> <div class="upload-symbol" aria-hidden="true">↥</div><label for="upload" id="uploadLabel">Select a CSV or Word document</label> <input id="upload" type="file" accept=".csv,.docx"> <p class="hint">CSV files need a header row with the exact sensor names. Word files must be .docx and contain a table: use the first row for sensor names and one engine reading per row. Include both unit and cycle columns to choose the latest cycle per engine.</p> <p class="file-status" id="fileStatus" aria-live="polite"></p> </section> <div class="actions"><button id="predict" class="primary" type="button"><span>Run engine analysis</span><span aria-hidden="true">→</span></button><button id="clear" class="secondary" type="button">Clear</button></div> <div id="message" class="error" role="alert"></div> <div aria-live="polite"></div> </section> <aside class="panel result-panel" aria-label="Prediction results"><div class="result-top"><div><p class="kicker">Your engine report</p><h2>Prediction</h2></div><span class="result-mark"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 17.5 9 12l3.3 3.3L20 7.5M14.5 7.5H20V13" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div><div class="result-empty" id="resultEmpty"><div class="result-glyph"><svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M24 7v13m0 8v13M7 24h13m8 0h13M12 12l9 9m6 6 9 9m0-24-9 9m-6 6-9 9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="24" cy="24" r="6" stroke="currentColor" stroke-width="1.8"/></svg></div><h3>Ready when you are</h3><p>Your estimated remaining life and engine health will appear here after analysis.</p></div><div id="result" class="result" aria-live="polite"></div><p class="result-foot">Estimates are based on the selected C-MAPSS dataset model.</p></aside> </section> <footer class="footer"><span class="foot">TURBOSENSE · Engine health intelligence</span><div class="footer-links"><a href="/docs">API documentation</a><a href="/healthz">Service status</a></div></footer> <p class="foot">For research and demonstration only. Model outputs are estimates and are not certified aircraft safety assessments or maintenance instructions.</p> </main> <script> const statusEl=document.querySelector('#status'); const message=document.querySelector('#message'); const result=document.querySelector('#result'); const resultEmpty=document.querySelector('#resultEmpty'); const predictButton=document.querySelector('#predict'); const subsetEl=document.querySelector('#subset'); const sensorGrid=document.querySelector('#sensorGrid'); const featureCount=document.querySelector('#featureCount'); const manualPanel=document.querySelector('#manualPanel'); const filePanel=document.querySelector('#filePanel'); const uploadInput=document.querySelector('#upload'); const fileStatus=document.querySelector('#fileStatus'); const modeButtons=[...document.querySelectorAll('.mode-tab')]; let manifest=null; let activeMode='manual'; let uploadedRows=null; function setMessage(text){message.textContent=text||''} function setMode(mode){ activeMode=mode; uploadedRows=null; uploadInput.value=''; fileStatus.textContent=''; setMessage(''); result.replaceChildren(); manualPanel.hidden=mode!=='manual'; filePanel.hidden=mode==='manual'; uploadInput.accept=mode==='csv'?'.csv':mode==='word'?'.docx':'.csv,.docx'; document.querySelector('#uploadLabel').textContent=mode==='csv'?'Choose a CSV file':mode==='word'?'Choose a Word document':'Select a CSV or Word document'; modeButtons.forEach(button=>{ const selected=button.dataset.mode===mode; button.classList.toggle('active',selected); button.setAttribute('aria-selected',String(selected)); }); } function renderSensorFields(){ const subset=subsetEl.value; const features=manifest?.selected_models?.[subset]?.features||[]; sensorGrid.replaceChildren(); features.forEach(feature=>{ const label=document.createElement('label'); label.className='sensor-field'; const name=document.createElement('span'); name.textContent=feature; const input=document.createElement('input'); input.type='number'; input.step='any'; input.required=true; input.dataset.feature=feature; input.setAttribute('aria-label',feature); input.placeholder='Enter '+feature; label.append(name,input); sensorGrid.append(label); }); featureCount.textContent=features.length+' required inputs'; } function getManualRow(){ const row={}; const unit=document.querySelector('#unit').value.trim(); const cycleText=document.querySelector('#cycle').value.trim(); if(Boolean(unit)!==Boolean(cycleText))throw Error('Enter both Engine or unit ID and Cycle, or leave both blank.'); if(unit){row.unit=unit;row.cycle=Number(cycleText);if(!Number.isFinite(row.cycle))throw Error('Cycle must be a finite number.')} for(const input of sensorGrid.querySelectorAll('[data-feature]')){ const text=input.value.trim(); if(text==='')throw Error('Enter a value for every required sensor and operating input.'); const value=Number(text); if(!Number.isFinite(value))throw Error(input.dataset.feature+' must be a finite number.'); row[input.dataset.feature]=value; } return [row]; } function showPredictions(data){ result.replaceChildren(); resultEmpty.hidden=Boolean(data.predictions?.length); for(const prediction of data.predictions||[]){ const card=document.createElement('div'); card.className='card'; const rulBlock=document.createElement('div'); const rulLabel=document.createElement('div'); rulLabel.className='hint'; rulLabel.textContent='ESTIMATED REMAINING USEFUL LIFE'; const rul=document.createElement('div'); rul.className='value'; rul.textContent=prediction.predicted_rul+' cycles'; rulBlock.append(rulLabel,rul); const healthBlock=document.createElement('div'); const healthLabel=document.createElement('div'); healthLabel.className='hint'; healthLabel.textContent='HEALTH STATE'; const health=document.createElement('div'); health.className='health'; health.textContent=prediction.health; health.dataset.health=String(prediction.health||'').toLowerCase(); healthBlock.append(healthLabel,health); card.append(rulBlock,healthBlock); result.append(card); } } async function parseUpload(file){ const form=new FormData(); form.append('subset',subsetEl.value); form.append('file',file); const response=await fetch('/api/parse-upload',{method:'POST',body:form}); const data=await response.json(); if(!response.ok)throw Error(typeof data.detail==='string'?data.detail:JSON.stringify(data.detail,null,2)); return data; } uploadInput.addEventListener('change',async()=>{ const file=uploadInput.files?.[0]; uploadedRows=null; setMessage(''); result.replaceChildren(); if(!file){fileStatus.textContent='';return} fileStatus.textContent='Reading '+file.name+'…'; try{ const data=await parseUpload(file); uploadedRows=data.rows; fileStatus.textContent='Ready: '+uploadedRows.length+' row(s) loaded for '+subsetEl.value+'.'; }catch(error){ fileStatus.textContent=''; setMessage(error.message); } }); modeButtons.forEach(button=>button.addEventListener('click',()=>setMode(button.dataset.mode))); subsetEl.addEventListener('change',()=>{ uploadedRows=null; uploadInput.value=''; fileStatus.textContent=''; setMessage(''); result.replaceChildren(); renderSensorFields(); }); document.querySelector('#clear').addEventListener('click',()=>{ uploadedRows=null; uploadInput.value=''; document.querySelector('#unit').value=''; document.querySelector('#cycle').value=''; sensorGrid.querySelectorAll('input').forEach(input=>input.value=''); fileStatus.textContent=''; setMessage(''); result.replaceChildren(); resultEmpty.hidden=false; }); predictButton.addEventListener('click',async()=>{ setMessage(''); result.replaceChildren(); resultEmpty.hidden=false; let rows; try{ rows=activeMode==='manual'?getManualRow():uploadedRows; if(!rows?.length)throw Error('Choose a file and wait for it to finish loading before running a prediction.'); }catch(error){setMessage(error.message);return} predictButton.disabled=true; predictButton.textContent='Predicting…'; try{ const response=await fetch('/api/predict',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({subset:subsetEl.value,rows})}); const data=await response.json(); if(!response.ok)throw Error(typeof data.detail==='string'?data.detail:JSON.stringify(data.detail,null,2)); showPredictions(data); }catch(error){setMessage(error.message)} finally{predictButton.disabled=false;predictButton.textContent='Run prediction'} }); async function initialize(){ try{ const [healthResponse,manifestResponse]=await Promise.all([fetch('/healthz'),fetch('/api/manifest')]); const health=await healthResponse.json(); if(!healthResponse.ok)throw Error('Health check failed.'); if(!manifestResponse.ok)throw Error('Could not load the sensor manifest.'); manifest=await manifestResponse.json(); statusEl.textContent=health.status==='ok'?'Models ready':'Model files missing'; statusEl.classList.toggle('offline',health.status!=='ok'); renderSensorFields(); }catch(error){ statusEl.textContent='Service unavailable'; statusEl.classList.add('offline'); featureCount.textContent='Sensor list unavailable'; setMessage(error.message); predictButton.disabled=true; } } initialize(); </script> </body> </html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#07111d">
+<meta name="description" content="Predictive maintenance insights for NASA C-MAPSS turbofan engines.">
+<title>TURBOSENSE | Predictive maintenance</title>
+<style>
+:root{color-scheme:dark;--bg:#07111d;--surface:#0d1a29;--surface-raised:#112235;--line:#21364a;--text:#f3f7fb;--muted:#95a9bd;--mint:#8de3c4;--mint-deep:#2c9d7b;--sky:#9ccfff;--danger:#ff9e9e;--gold:#e4c58b;--radius:22px}
+*{box-sizing:border-box}html{min-height:100%;scroll-behavior:smooth}
+body{min-height:100vh;margin:0;background:radial-gradient(ellipse at 76% 8%,#153b49 0,transparent 29%),radial-gradient(ellipse at 9% 35%,#10223a 0,transparent 32%),var(--bg);color:var(--text);font:15px/1.6 Inter,"Segoe UI",system-ui,sans-serif;letter-spacing:.005em}
+button,input,select{font:inherit}button{cursor:pointer}a{color:inherit}
+.wrap{width:min(1180px,100% - 48px);margin:0 auto;padding:28px 0 36px}
+.topbar{height:52px;display:flex;align-items:center;justify-content:space-between;margin-bottom:62px}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;font-size:14px;font-weight:800;letter-spacing:.12em}.brand-mark{width:38px;height:38px;display:grid;place-items:center;border:1px solid #2e5961;border-radius:12px;background:linear-gradient(145deg,#183a42,#102331);color:var(--mint);box-shadow:inset 0 1px #ffffff12}.brand-mark svg{width:22px;height:22px}
+.top-links{display:flex;align-items:center;gap:20px}.top-links a{color:#a8b8c8;text-decoration:none;font-size:13px}.top-links a:hover{color:var(--mint)}.eda-link{border:1px solid #31515c;border-radius:999px;padding:7px 11px;background:#102633;color:#b9edda!important}
+.status{display:inline-flex;align-items:center;gap:9px;border:1px solid #29423e;border-radius:999px;background:#10251f;padding:8px 13px;color:#c6eadc;font-size:12px;font-weight:650;white-space:nowrap}.status::before{content:"";width:7px;height:7px;border-radius:50%;background:#75d4a8;box-shadow:0 0 12px #75d4a899}.status.offline{border-color:#593238;background:#2b171c;color:#ffb5b5}.status.offline::before{background:#ff818a;box-shadow:0 0 12px #ff818a99}
+.hero{display:grid;grid-template-columns:1.2fr .8fr;align-items:center;gap:56px;margin-bottom:50px}.eyebrow{display:flex;align-items:center;gap:10px;color:var(--mint);font-size:11px;font-weight:750;letter-spacing:.2em;text-transform:uppercase}.eyebrow::before{content:"";width:23px;height:1px;background:var(--mint)}
+h1{margin:18px 0 15px;font-size:clamp(44px,7vw,76px);line-height:.96;letter-spacing:-.065em;font-weight:730}h1 span{display:block;color:var(--mint)}.hero-copy{max-width:560px;margin:0;color:#a8b7c6;font-size:17px;line-height:1.7}.hero-copy strong{color:#ecf4f7;font-weight:600}
+.hero-art{position:relative;min-height:220px;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid #24424e;border-radius:30px;background:linear-gradient(140deg,#102638dd,#0b1824dd);box-shadow:0 26px 80px #0004,inset 0 1px #ffffff0a}.hero-art::before,.hero-art::after{content:"";position:absolute;border:1px solid #71d9c31c;border-radius:50%;width:260px;height:260px}.hero-art::after{width:190px;height:190px;border-color:#71d9c333}.orbit{position:absolute;width:310px;height:96px;border:1px solid #71d9c344;border-radius:50%;transform:rotate(-28deg)}.engine-core{position:relative;z-index:1;width:104px;height:104px;display:grid;place-items:center;border:1px solid #80d9c866;border-radius:50%;background:radial-gradient(circle,#234d50 0,#112c36 58%,#0c1b28 59%);box-shadow:0 0 55px #72d9c326}.engine-core svg{width:46px;height:46px;color:var(--mint)}.orbit-dot{position:absolute;top:39px;right:calc(50% - 118px);width:11px;height:11px;border:2px solid #c3f3df;border-radius:50%;background:#51c7a0;box-shadow:0 0 18px #51c7a0}.art-label{position:absolute;bottom:20px;left:22px;color:#7692a5;font-size:10px;letter-spacing:.16em;text-transform:uppercase}.art-code{position:absolute;top:19px;right:21px;color:#7791a4;font:11px ui-monospace,monospace}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:28px}.stat{padding:11px 14px;border-left:1px solid #2b4951}.stat strong{display:block;color:#f1f7f7;font-size:17px;letter-spacing:-.02em}.stat span{color:#8499a9;font-size:11px}
+.workspace{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(280px,.75fr);align-items:start;gap:20px}.panel{border:1px solid #203649;border-radius:var(--radius);background:linear-gradient(155deg,#112235ed,#0b1927f5);box-shadow:0 22px 70px #0003,inset 0 1px #ffffff0a}.form-panel{padding:27px}.panel-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;padding-bottom:20px;border-bottom:1px solid #203446}.kicker{margin:0 0 5px;color:var(--mint);font-size:10px;font-weight:750;letter-spacing:.17em;text-transform:uppercase}.panel-heading h2,.result-panel h2{margin:0;font-size:20px;letter-spacing:-.03em}.panel-heading p{margin:6px 0 0;color:var(--muted);font-size:13px}
+.dataset-select{min-width:145px}.field-label{display:block;margin:22px 0 8px;color:#cfdae3;font-size:12px;font-weight:650;letter-spacing:.03em}.select-wrap{position:relative}.select-wrap::after{content:"⌄";position:absolute;right:13px;top:8px;color:#91a9bb;pointer-events:none}select,input{width:100%;border:1px solid #2b4356;border-radius:11px;background:#091725;color:var(--text);padding:11px 13px;outline:none;transition:border-color .18s,box-shadow .18s,background .18s}select{appearance:none;padding-right:34px}select:focus,input:focus{border-color:#65cdb0;box-shadow:0 0 0 3px #65cdb021;background:#0b1d2b}input::placeholder{color:#61788c}.mode-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:23px 0 18px;padding:5px;border:1px solid #1e3446;border-radius:14px;background:#091623}.mode-tab{display:flex;justify-content:center;align-items:center;gap:8px;min-height:42px;padding:8px 10px;border:1px solid transparent;border-radius:10px;background:transparent;color:#9bafbf;font-size:12px;font-weight:650;transition:all .18s}.mode-tab:hover{color:#eaf7f4;background:#ffffff07}.mode-tab.active{border-color:#356258;background:linear-gradient(135deg,#1b413d,#16312f);color:#aaf0d5;box-shadow:0 3px 14px #0002}.mode-icon{font-size:15px;line-height:1}
+.hint{color:#8fa3b4;font-size:12px}.panel-note{margin:0 0 17px;line-height:1.65}.optional-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;max-width:560px;margin-bottom:19px}.optional-field{margin:0}.optional-field input{display:block;margin-top:6px}.sensor-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:16px 0 10px;color:#d9e3e9;font-size:12px}.count-pill{padding:5px 9px;border:1px solid #28424e;border-radius:999px;color:#9bcabd;background:#10252b;font-size:10px;white-space:nowrap}.sensor-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}.sensor-field{margin:0;min-width:0}.sensor-field span{display:block;margin-bottom:5px;color:#9fb2c0;font:11px ui-monospace,SFMono-Regular,Consolas,monospace}.sensor-field input{height:42px;padding:9px 11px;font-size:13px;font-variant-numeric:tabular-nums}
+.file-panel{padding:25px;border:1px dashed #3a5c69;border-radius:16px;background:linear-gradient(145deg,#102533,#0a1824);transition:border-color .2s,background .2s}.file-panel:focus-within,.file-panel:hover{border-color:#76d6bc;background:linear-gradient(145deg,#12303a,#0a1824)}.upload-symbol{width:43px;height:43px;display:grid;place-items:center;margin-bottom:14px;border:1px solid #2d5158;border-radius:13px;background:#153239;color:var(--mint);font-size:20px}.file-panel label{display:block;color:#edf5f5;font-size:14px;font-weight:650}.file-panel input[type=file]{display:block;width:100%;margin-top:12px;padding:13px;border:1px solid #2b4557;border-radius:11px;background:#091725;color:#9db1bf;font-size:12px}.file-panel input[type=file]::file-selector-button{margin-right:12px;padding:8px 11px;border:0;border-radius:7px;background:#214b48;color:#c0f0de;font-weight:650;cursor:pointer}.file-panel .hint{margin:12px 0 0;line-height:1.65}.file-status{margin:14px 0 0;color:var(--mint);font-size:12px}
+.error{margin-top:12px;color:var(--danger);font-size:13px;white-space:pre-wrap}.actions{display:flex;gap:10px;align-items:center;margin-top:22px}.primary{display:inline-flex;justify-content:center;align-items:center;gap:9px;min-height:46px;padding:0 19px;border:1px solid #87e1c4;border-radius:12px;background:linear-gradient(135deg,#a2ebcf,#62c5a4);color:#09231e;font-size:13px;font-weight:800;box-shadow:0 8px 24px #54c49c26;transition:transform .18s,box-shadow .18s}.primary:hover{transform:translateY(-1px);box-shadow:0 12px 30px #54c49c3d}.primary:disabled{opacity:.65;cursor:wait;transform:none}.secondary{min-height:44px;padding:0 16px;border:1px solid #31495b;border-radius:12px;background:transparent;color:#b0bfcb;font-size:12px;font-weight:650}.secondary:hover{border-color:#587385;color:#eef5f7;background:#ffffff06}
+.result-panel{position:sticky;top:22px;min-height:390px;padding:25px;overflow:hidden}.result-panel::before{content:"";position:absolute;top:-100px;right:-110px;width:240px;height:240px;border-radius:50%;background:#54c6a514;filter:blur(20px);pointer-events:none}.result-top{position:relative;display:flex;align-items:center;justify-content:space-between;gap:10px}.result-mark{width:36px;height:36px;display:grid;place-items:center;border:1px solid #2f4d53;border-radius:11px;background:#132b32;color:var(--mint)}.result-mark svg{width:18px;height:18px}.result-empty{position:relative;display:flex;min-height:275px;flex-direction:column;align-items:center;justify-content:center;text-align:center}.result-glyph{width:112px;height:112px;display:grid;place-items:center;margin-bottom:20px;border:1px solid #294351;border-radius:50%;background:radial-gradient(circle,#15343d 0,#102634 65%,#0d1d2b 66%);color:#7ad4b6;box-shadow:0 0 0 12px #132a351a,0 0 55px #5ac3a012}.result-glyph svg{width:42px;height:42px}.result-empty h3{margin:0;color:#dfe9ec;font-size:15px}.result-empty p{max-width:240px;margin:7px 0 0;color:#879cab;font-size:12px}.result{position:relative;display:grid;gap:11px;margin-top:22px}.card{display:flex;justify-content:space-between;align-items:center;gap:15px;padding:16px;border:1px solid #2c4c52;border-radius:15px;background:linear-gradient(135deg,#112a30,#0c1d29)}.result .card:first-child{margin-top:22px}.value{font-size:clamp(24px,3vw,32px);font-weight:750;letter-spacing:-.045em;color:#a7e9cf;font-variant-numeric:tabular-nums}.health{display:inline-flex;margin-top:7px;padding:6px 10px;border:1px solid #2c544b;border-radius:999px;background:#18352e;color:#a7e9cf;font-size:11px;font-weight:750;text-transform:capitalize}.health[data-health="critical"]{border-color:#673c3c;background:#341e24;color:#ffb2b2}.health[data-health="warning"]{border-color:#6b5737;background:#332b1c;color:#f2d393}.result .hint{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase}.result-foot{margin:14px 0 0;color:#8196a5;font-size:11px;line-height:1.6}
+.eda-section{margin:20px 0 26px;padding:24px;border:1px solid #203649;border-radius:var(--radius);background:linear-gradient(155deg,#112235ed,#0b1927f5);box-shadow:0 22px 70px #0003,inset 0 1px #ffffff0a}.eda-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:20px}.eda-heading h2{margin:0;font-size:20px;letter-spacing:-.03em}.eda-heading p{margin:6px 0 0;color:var(--muted);font-size:13px}.eda-close{min-height:38px;padding:0 14px;border:1px solid #31495b;border-radius:10px;background:transparent;color:#b0bfcb;font-size:12px;font-weight:650}.eda-close:hover{border-color:#587385;color:#eef5f7}.eda-folders{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0 15px}.eda-folder{padding:9px 13px;border:1px solid #2b4356;border-radius:10px;background:#091725;color:#aebfca;font-size:12px;font-weight:650}.eda-folder.active{border-color:#65cdb0;background:#16332f;color:#aaf0d5}.eda-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.eda-card{overflow:hidden;border:1px solid #284353;border-radius:14px;background:#0a1825}.eda-card img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;background:#07111d}.eda-card figcaption{padding:10px 11px;color:#b5c5ce;font-size:11px;line-height:1.4}.eda-empty{padding:20px 0;color:#8fa3b4;font-size:13px}
+.foot{margin:25px 0 0;color:#778c9e;font-size:11px;line-height:1.65}.footer{display:flex;justify-content:space-between;gap:16px;margin-top:25px;padding-top:18px;border-top:1px solid #182c3b;color:#708697;font-size:11px}.footer-links{display:flex;gap:16px}.footer a{color:#9bb5c5;text-decoration:none}.footer a:hover{color:var(--mint)}[hidden]{display:none!important}
+@media(max-width:920px){.wrap{width:min(760px,100% - 36px);padding-top:20px}.topbar{margin-bottom:42px}.hero{grid-template-columns:1fr;gap:24px;margin-bottom:34px}.hero-art{min-height:175px}.workspace{grid-template-columns:1fr}.result-panel{position:relative;top:auto;min-height:300px}.result-empty{min-height:190px}.result-glyph{width:82px;height:82px;margin-bottom:14px}.result-glyph svg{width:33px;height:33px}}
+@media(max-width:600px){.wrap{width:calc(100% - 28px);padding-top:12px}.topbar{margin-bottom:35px}.top-links{gap:11px}.top-links a{font-size:11px}.top-links .status{padding:7px 10px;font-size:10px}.hero{gap:21px}.hero-copy{font-size:15px}.stats{gap:4px;margin-top:20px}.stat{padding:9px 8px}.stat strong{font-size:15px}.stat span{font-size:9px}.hero-art{min-height:145px;border-radius:22px}.workspace{gap:14px}.form-panel,.result-panel{padding:19px;border-radius:18px}.panel-heading{display:block}.dataset-select{margin-top:14px}.mode-tabs{gap:4px;margin-top:18px}.mode-tab{flex-direction:column;gap:2px;padding:7px 4px;font-size:10px}.mode-icon{font-size:14px}.sensor-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.optional-grid{gap:9px}.optional-field{font-size:11px}.actions{align-items:stretch}.actions button{flex:1;padding:0 10px;font-size:12px}.footer{flex-direction:column}.footer-links{gap:13px}}
+@media(max-width:360px){.sensor-grid,.optional-grid{grid-template-columns:1fr}.top-links a{display:none}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <nav class="topbar" aria-label="Main navigation">
+    <a class="brand" href="/" aria-label="TURBOSENSE home"><span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3.5v7.2m0 2.6v7.2M3.5 12h7.2m2.6 0h7.2M6 6l5.1 5.1m1.8 1.8L18 18m0-12-5.1 5.1m-1.8 1.8L6 18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="12" r="3.3" stroke="currentColor" stroke-width="1.6"/></svg></span>TURBOSENSE</a>
+    <div class="top-links"><a href="#workspace">Workspace</a><a href="#eda" class="eda-link" id="edaToggle">EDA graphs</a><a href="/docs">API docs</a><div class="status" id="status">Connecting…</div></div>
+  </nav>
+
+  <header class="hero">
+    <div>
+      <div class="eyebrow">Predictive maintenance · NASA C-MAPSS</div>
+      <h1>Know what’s next.<span>Before it fails.</span></h1>
+      <p class="hero-copy">Turn engine sensor readings into a clear <strong>remaining useful life estimate</strong> and an at-a-glance health state.</p>
+      <div class="stats" aria-label="Project capabilities"><div class="stat"><strong>04</strong><span>C-MAPSS models</span></div><div class="stat"><strong>21</strong><span>Named sensors</span></div><div class="stat"><strong>03</strong><span>Input methods</span></div></div>
+    </div>
+    <div class="hero-art" aria-hidden="true"><div class="orbit"></div><div class="orbit-dot"></div><div class="engine-core"><svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="19" stroke="currentColor" stroke-width="1.5" opacity=".55"/><path d="M24 9v12m0 6v12M9 24h12m6 0h12M13.4 13.4l8.5 8.5m4.2 4.2 8.5 8.5m0-21.2-8.5 8.5m-4.2 4.2-8.5 8.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="24" cy="24" r="5" stroke="currentColor" stroke-width="1.7"/></svg></div><span class="art-label">Engine intelligence system</span><span class="art-code">TS / CM-04</span></div>
+  </header>
+
+  <section class="eda-section" id="eda" hidden>
+    <div class="eda-heading"><div><p class="kicker">Project exploration</p><h2>EDA graph library</h2><p>Open a dataset folder to inspect the graphs generated from the NASA C-MAPSS analysis.</p></div><button class="eda-close" id="edaClose" type="button">Close library</button></div>
+    <div class="eda-folders" id="edaFolders" role="tablist" aria-label="EDA dataset folders"></div>
+    <div class="eda-grid" id="edaGrid"></div>
+  </section>
+
+  <section class="workspace" id="workspace">
+  <section class="panel form-panel">
+    <div class="panel-heading"><div><p class="kicker">Analysis workspace</p><h2>Start with an engine reading</h2><p>Choose a dataset and add your sensor data.</p></div><div class="dataset-select"><label class="field-label" for="subset">Dataset model</label><div class="select-wrap"><select id="subset"><option>FD001</option><option>FD002</option><option>FD003</option><option>FD004</option></select></div></div></div>
+
+    <div class="mode-tabs" role="tablist" aria-label="Choose how to enter sensor readings">
+      <button class="mode-tab active" type="button" data-mode="manual" role="tab" aria-selected="true"><span class="mode-icon" aria-hidden="true">⌘</span>Manual entry</button>
+      <button class="mode-tab" type="button" data-mode="csv" role="tab" aria-selected="false"><span class="mode-icon" aria-hidden="true">↥</span>CSV upload</button>
+      <button class="mode-tab" type="button" data-mode="word" role="tab" aria-selected="false"><span class="mode-icon" aria-hidden="true">▤</span>Word upload</button>
+    </div>
+
+    <section id="manualPanel">
+      <p class="hint panel-note">Enter a value for every required input. Sensor names update automatically when you change the FD subset.</p>
+      <div class="optional-grid">
+        <label class="optional-field">Engine or unit ID (optional)<input id="unit" type="text" placeholder="e.g. 1"></label>
+        <label class="optional-field">Cycle (optional)<input id="cycle" type="number" min="0" step="any" placeholder="e.g. 120"></label>
+      </div>
+      <div class="sensor-heading"><strong>Sensor and operating inputs</strong><span class="count-pill" id="featureCount">Loading fields…</span></div>
+      <div id="sensorGrid" class="sensor-grid"></div>
+    </section>
+
+    <section id="filePanel" class="file-panel" hidden>
+      <div class="upload-symbol" aria-hidden="true">↥</div><label for="upload" id="uploadLabel">Select a CSV or Word document</label>
+      <input id="upload" type="file" accept=".csv,.docx">
+      <p class="hint">CSV files need a header row with the exact sensor names. Word files must be .docx and contain a table: use the first row for sensor names and one engine reading per row. Include both unit and cycle columns to choose the latest cycle per engine.</p>
+      <p class="file-status" id="fileStatus" aria-live="polite"></p>
+    </section>
+
+    <div class="actions"><button id="predict" class="primary" type="button"><span>Run engine analysis</span><span aria-hidden="true">→</span></button><button id="clear" class="secondary" type="button">Clear</button></div>
+    <div id="message" class="error" role="alert"></div>
+    <div  aria-live="polite"></div>
+  </section>
+  <aside class="panel result-panel" aria-label="Prediction results"><div class="result-top"><div><p class="kicker">Your engine report</p><h2>Prediction</h2></div><span class="result-mark"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 17.5 9 12l3.3 3.3L20 7.5M14.5 7.5H20V13" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div><div class="result-empty" id="resultEmpty"><div class="result-glyph"><svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M24 7v13m0 8v13M7 24h13m8 0h13M12 12l9 9m6 6 9 9m0-24-9 9m-6 6-9 9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="24" cy="24" r="6" stroke="currentColor" stroke-width="1.8"/></svg></div><h3>Ready when you are</h3><p>Your estimated remaining life and engine health will appear here after analysis.</p></div><div id="result" class="result" aria-live="polite"></div><p class="result-foot">Estimates are based on the selected C-MAPSS dataset model.</p></aside>
+  </section>
+
+  <footer class="footer"><span class="foot">TURBOSENSE · Engine health intelligence</span><div class="footer-links"><a href="/docs">API documentation</a><a href="/healthz">Service status</a></div></footer>
+  <p class="foot">For research and demonstration only. Model outputs are estimates and are not certified aircraft safety assessments or maintenance instructions.</p>
+</main>
+
+<script>
+const statusEl=document.querySelector('#status');
+const message=document.querySelector('#message');
+const result=document.querySelector('#result');
+const resultEmpty=document.querySelector('#resultEmpty');
+const predictButton=document.querySelector('#predict');
+const subsetEl=document.querySelector('#subset');
+const sensorGrid=document.querySelector('#sensorGrid');
+const featureCount=document.querySelector('#featureCount');
+const manualPanel=document.querySelector('#manualPanel');
+const filePanel=document.querySelector('#filePanel');
+const uploadInput=document.querySelector('#upload');
+const fileStatus=document.querySelector('#fileStatus');
+const modeButtons=[...document.querySelectorAll('.mode-tab')];
+const edaSection=document.querySelector('#eda');
+const edaToggle=document.querySelector('#edaToggle');
+const edaClose=document.querySelector('#edaClose');
+const edaFolders=document.querySelector('#edaFolders');
+const edaGrid=document.querySelector('#edaGrid');
+let manifest=null;
+let activeMode='manual';
+let uploadedRows=null;
+
+function setMessage(text){message.textContent=text||''}
+const edaGraphs={
+  FD001:['FD001_engine_lifespan.png','FD001_rul_distribution.png','FD001_sensor_rul_correlation.png','FD001_sensor_trajectories.png','FD001_sensor_variability.png','FD001_sensor_vs_rul.png','FD001_engine_79_BPR_trajectory.png','FD001_engine_79_EPR_trajectory.png','FD001_engine_79_farB_trajectory.png','FD001_engine_79_htBleed_trajectory.png','FD001_engine_79_Nc_trajectory.png','FD001_engine_79_Nf_trajectory.png','FD001_engine_79_Nf_dmd_trajectory.png','FD001_engine_79_NRc_trajectory.png','FD001_engine_79_NRf_trajectory.png','FD001_engine_79_P15_trajectory.png','FD001_engine_79_P2_trajectory.png','FD001_engine_79_P30_trajectory.png','FD001_engine_79_PCNfR_dmd_trajectory.png','FD001_engine_79_phi_trajectory.png','FD001_engine_79_Ps30_trajectory.png','FD001_engine_79_T24_trajectory.png','FD001_engine_79_T2_trajectory.png','FD001_engine_79_T30_trajectory.png','FD001_engine_79_T50_trajectory.png','FD001_engine_79_W31_trajectory.png','FD001_engine_79_W32_trajectory.png'],
+  FD002:['FD002_engine_lifespan.png','FD002_rul_distribution.png','FD002_sensor_rul_correlation.png','FD002_sensor_trajectories.png','FD002_sensor_variability.png','FD002_sensor_vs_rul.png','FD002_engine_54_BPR_trajectory.png','FD002_engine_54_EPR_trajectory.png','FD002_engine_54_farB_trajectory.png','FD002_engine_54_htBleed_trajectory.png','FD002_engine_54_Nc_trajectory.png','FD002_engine_54_Nf_trajectory.png','FD002_engine_54_Nf_dmd_trajectory.png','FD002_engine_54_NRc_trajectory.png','FD002_engine_54_NRf_trajectory.png','FD002_engine_54_P15_trajectory.png','FD002_engine_54_P2_trajectory.png','FD002_engine_54_P30_trajectory.png','FD002_engine_54_PCNfR_dmd_trajectory.png','FD002_engine_54_phi_trajectory.png','FD002_engine_54_Ps30_trajectory.png','FD002_engine_54_T24_trajectory.png','FD002_engine_54_T2_trajectory.png','FD002_engine_54_T30_trajectory.png','FD002_engine_54_T50_trajectory.png','FD002_engine_54_W31_trajectory.png','FD002_engine_54_W32_trajectory.png'],
+  FD003:['FD003_engine_lifespan.png','FD003_rul_distribution.png','FD003_sensor_rul_correlation.png','FD003_sensor_trajectories.png','FD003_sensor_variability.png','FD003_sensor_vs_rul.png','FD003_engine_78_BPR_trajectory.png','FD003_engine_78_EPR_trajectory.png','FD003_engine_78_farB_trajectory.png','FD003_engine_78_htBleed_trajectory.png','FD003_engine_78_Nc_trajectory.png','FD003_engine_78_Nf_trajectory.png','FD003_engine_78_Nf_dmd_trajectory.png','FD003_engine_78_NRc_trajectory.png','FD003_engine_78_NRf_trajectory.png','FD003_engine_78_P15_trajectory.png','FD003_engine_78_P2_trajectory.png','FD003_engine_78_P30_trajectory.png','FD003_engine_78_PCNfR_dmd_trajectory.png','FD003_engine_78_phi_trajectory.png','FD003_engine_78_Ps30_trajectory.png','FD003_engine_78_T24_trajectory.png','FD003_engine_78_T2_trajectory.png','FD003_engine_78_T30_trajectory.png','FD003_engine_78_T50_trajectory.png','FD003_engine_78_W31_trajectory.png','FD003_engine_78_W32_trajectory.png'],
+  FD004:['FD004_engine_lifespan.png','FD004_rul_distribution.png','FD004_sensor_rul_correlation.png','FD004_sensor_trajectories.png','FD004_sensor_variability.png','FD004_sensor_vs_rul.png','FD004_engine_147_BPR_trajectory.png','FD004_engine_147_EPR_trajectory.png','FD004_engine_147_farB_trajectory.png','FD004_engine_147_htBleed_trajectory.png','FD004_engine_147_Nc_trajectory.png','FD004_engine_147_Nf_trajectory.png','FD004_engine_147_Nf_dmd_trajectory.png','FD004_engine_147_NRc_trajectory.png','FD004_engine_147_NRf_trajectory.png','FD004_engine_147_P15_trajectory.png','FD004_engine_147_P2_trajectory.png','FD004_engine_147_P30_trajectory.png','FD004_engine_147_PCNfR_dmd_trajectory.png','FD004_engine_147_phi_trajectory.png','FD004_engine_147_Ps30_trajectory.png','FD004_engine_147_T24_trajectory.png','FD004_engine_147_T2_trajectory.png','FD004_engine_147_T30_trajectory.png','FD004_engine_147_T50_trajectory.png','FD004_engine_147_W31_trajectory.png','FD004_engine_147_W32_trajectory.png']
+};
+let activeEdaFolder='FD001';
+function renderEdaFolders(){
+  edaFolders.replaceChildren();
+  ['FD001','FD002','FD003','FD004'].forEach(folder=>{
+    const button=document.createElement('button');
+    button.className='eda-folder'+(folder===activeEdaFolder?' active':'');
+    button.type='button';
+    button.textContent=folder+' folder';
+    button.addEventListener('click',()=>{activeEdaFolder=folder;renderEdaFolders();renderEdaGraphs()});
+    edaFolders.append(button);
+  });
+}
+function renderEdaGraphs(){
+  edaGrid.replaceChildren();
+  for(const filename of edaGraphs[activeEdaFolder]){
+    const figure=document.createElement('figure');
+    figure.className='eda-card';
+    const image=document.createElement('img');
+    image.src='/static/eda/'+activeEdaFolder+'/'+filename;
+    image.alt=filename.replaceAll('_',' ').replace('.png','');
+    image.loading='lazy';
+    const caption=document.createElement('figcaption');
+    caption.textContent=filename.replace('.png','').replaceAll('_',' ');
+    figure.append(image,caption);
+    edaGrid.append(figure);
+  }
+}
+function openEda(){
+  edaSection.hidden=false;
+  renderEdaFolders();
+  renderEdaGraphs();
+  edaSection.scrollIntoView({behavior:'smooth',block:'start'});
+}
+edaToggle.addEventListener('click',event=>{event.preventDefault();openEda()});
+edaClose.addEventListener('click',()=>{edaSection.hidden=true});
+function setMode(mode){
+  activeMode=mode;
+  uploadedRows=null;
+  uploadInput.value='';
+  fileStatus.textContent='';
+  setMessage('');
+  result.replaceChildren();
+  manualPanel.hidden=mode!=='manual';
+  filePanel.hidden=mode==='manual';
+  uploadInput.accept=mode==='csv'?'.csv':mode==='word'?'.docx':'.csv,.docx';
+  document.querySelector('#uploadLabel').textContent=mode==='csv'?'Choose a CSV file':mode==='word'?'Choose a Word document':'Select a CSV or Word document';
+  modeButtons.forEach(button=>{
+    const selected=button.dataset.mode===mode;
+    button.classList.toggle('active',selected);
+    button.setAttribute('aria-selected',String(selected));
+  });
+}
+function renderSensorFields(){
+  const subset=subsetEl.value;
+  const features=manifest?.selected_models?.[subset]?.features||[];
+  sensorGrid.replaceChildren();
+  features.forEach(feature=>{
+    const label=document.createElement('label');
+    label.className='sensor-field';
+    const name=document.createElement('span');
+    name.textContent=feature;
+    const input=document.createElement('input');
+    input.type='number';
+    input.step='any';
+    input.required=true;
+    input.dataset.feature=feature;
+    input.setAttribute('aria-label',feature);
+    input.placeholder='Enter '+feature;
+    label.append(name,input);
+    sensorGrid.append(label);
+  });
+  featureCount.textContent=features.length+' required inputs';
+}
+function getManualRow(){
+  const row={};
+  const unit=document.querySelector('#unit').value.trim();
+  const cycleText=document.querySelector('#cycle').value.trim();
+  if(Boolean(unit)!==Boolean(cycleText))throw Error('Enter both Engine or unit ID and Cycle, or leave both blank.');
+  if(unit){row.unit=unit;row.cycle=Number(cycleText);if(!Number.isFinite(row.cycle))throw Error('Cycle must be a finite number.')}
+  for(const input of sensorGrid.querySelectorAll('[data-feature]')){
+    const text=input.value.trim();
+    if(text==='')throw Error('Enter a value for every required sensor and operating input.');
+    const value=Number(text);
+    if(!Number.isFinite(value))throw Error(input.dataset.feature+' must be a finite number.');
+    row[input.dataset.feature]=value;
+  }
+  return [row];
+}
+function showPredictions(data){
+  result.replaceChildren();
+  resultEmpty.hidden=Boolean(data.predictions?.length);
+  for(const prediction of data.predictions||[]){
+    const card=document.createElement('div');
+    card.className='card';
+    const rulBlock=document.createElement('div');
+    const rulLabel=document.createElement('div');
+    rulLabel.className='hint';
+    rulLabel.textContent='ESTIMATED REMAINING USEFUL LIFE';
+    const rul=document.createElement('div');
+    rul.className='value';
+    rul.textContent=prediction.predicted_rul+' cycles';
+    rulBlock.append(rulLabel,rul);
+    const healthBlock=document.createElement('div');
+    const healthLabel=document.createElement('div');
+    healthLabel.className='hint';
+    healthLabel.textContent='HEALTH STATE';
+    const health=document.createElement('div');
+    health.className='health';
+    health.textContent=prediction.health;
+    health.dataset.health=String(prediction.health||'').toLowerCase();
+    healthBlock.append(healthLabel,health);
+    card.append(rulBlock,healthBlock);
+    result.append(card);
+  }
+}
+async function responseData(response){
+  const text=await response.text();
+  if(!text.trim()){
+    throw Error(response.ok?'The server returned an empty response.':'The server did not return a readable error response. Try again after the service is ready.');
+  }
+  try{return JSON.parse(text)}
+  catch(error){throw Error(response.ok?'The server returned invalid JSON.':'The server returned an unreadable error response. Try again after the service is ready.')}
+}
+async function parseUpload(file){
+  const form=new FormData();
+  form.append('subset',subsetEl.value);
+  form.append('file',file);
+  const response=await fetch('/api/parse-upload',{method:'POST',body:form});
+  const data=await responseData(response);
+  if(!response.ok)throw Error(typeof data.detail==='string'?data.detail:JSON.stringify(data.detail,null,2));
+  return data;
+}
+uploadInput.addEventListener('change',async()=>{
+  const file=uploadInput.files?.[0];
+  uploadedRows=null;
+  setMessage('');
+  result.replaceChildren();
+  if(!file){fileStatus.textContent='';return}
+  fileStatus.textContent='Reading '+file.name+'…';
+  try{
+    const data=await parseUpload(file);
+    uploadedRows=data.rows;
+    fileStatus.textContent='Ready: '+uploadedRows.length+' row(s) loaded for '+subsetEl.value+'.';
+  }catch(error){
+    fileStatus.textContent='';
+    setMessage(error.message);
+  }
+});
+modeButtons.forEach(button=>button.addEventListener('click',()=>setMode(button.dataset.mode)));
+subsetEl.addEventListener('change',()=>{
+  uploadedRows=null;
+  uploadInput.value='';
+  fileStatus.textContent='';
+  setMessage('');
+  result.replaceChildren();
+  renderSensorFields();
+});
+document.querySelector('#clear').addEventListener('click',()=>{
+  uploadedRows=null;
+  uploadInput.value='';
+  document.querySelector('#unit').value='';
+  document.querySelector('#cycle').value='';
+  sensorGrid.querySelectorAll('input').forEach(input=>input.value='');
+  fileStatus.textContent='';
+  setMessage('');
+  result.replaceChildren();
+  resultEmpty.hidden=false;
+});
+predictButton.addEventListener('click',async()=>{
+  setMessage('');
+  result.replaceChildren();
+  resultEmpty.hidden=false;
+  let rows;
+  try{
+    rows=activeMode==='manual'?getManualRow():uploadedRows;
+    if(!rows?.length)throw Error('Choose a file and wait for it to finish loading before running a prediction.');
+  }catch(error){setMessage(error.message);return}
+  predictButton.disabled=true;
+  predictButton.textContent='Predicting…';
+  try{
+    const response=await fetch('/api/predict',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({subset:subsetEl.value,rows})});
+    const data=await responseData(response);
+    if(!response.ok)throw Error(typeof data.detail==='string'?data.detail:JSON.stringify(data.detail,null,2));
+    showPredictions(data);
+  }catch(error){setMessage(error.message)}
+  finally{predictButton.disabled=false;predictButton.textContent='Run prediction'}
+});
+async function initialize(){
+  try{
+    const [healthResponse,manifestResponse]=await Promise.all([fetch('/healthz'),fetch('/api/manifest')]);
+    const health=await responseData(healthResponse);
+    if(!healthResponse.ok)throw Error('Health check failed.');
+    if(!manifestResponse.ok)throw Error('Could not load the sensor manifest.');
+    manifest=await responseData(manifestResponse);
+    statusEl.textContent=health.status==='ok'?'Models ready':'Model files missing';
+    statusEl.classList.toggle('offline',health.status!=='ok');
+    renderSensorFields();
+  }catch(error){
+    statusEl.textContent='Service unavailable';
+    statusEl.classList.add('offline');
+    featureCount.textContent='Sensor list unavailable';
+    setMessage(error.message);
+    predictButton.disabled=true;
+  }
+}
+initialize();
+</script>
+</body>
+</html>
