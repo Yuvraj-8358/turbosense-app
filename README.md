@@ -25,7 +25,7 @@ The prediction response contains estimated RUL cycles and a critical, warning, o
 
 ## Render configuration
 
-The checked-in render.yaml sets the Python version, Free plan, build command, start command, and /healthz health check. The build installs dependencies, downloads the model bundles from the configured GitHub Release, and compacts tree-ensemble bundles to 64 evenly sampled trees so FD002 and FD004 fit more reliably within the free instance memory limit.
+The checked-in render.yaml sets the Python version, Free plan, build command, start command, and /healthz health check. The build installs dependencies and downloads the model bundles from the configured GitHub Release.
 
 Configure these environment variables in Render:
 
@@ -34,11 +34,11 @@ Configure these environment variables in Render:
 - GITHUB_TOKEN: read-only token for a private repository; keep it only in Render and never commit it
 - PYTHON_VERSION: set in render.yaml
 
-Keep the large .joblib bundles out of normal Git history. Attach the four model bundles to a GitHub Release instead. The free Render instance has 512 MB RAM and may spin down after inactivity. The browser also handles empty or non-JSON server responses without exposing a raw JSON parsing exception.
+Keep the large .joblib bundles out of normal Git history. Attach the four model bundles to a GitHub Release instead. The free Render instance has 512 MB RAM and may spin down after inactivity.
 
 ## Local run
 
 1. Install packages from requirements.txt.
 2. Set GITHUB_REPOSITORY, MODEL_RELEASE_TAG, and, for a private release, GITHUB_TOKEN.
 3. Run python download_models.py.
-4. Start the app with uvicorn app:app --host 0.0.0.0 --port 8000
+4. Start the app with uvicorn app:app --host 0.0.0.0 --port 8000.

@@ -2,7 +2,6 @@ import io
 import json
 import math
 import os
-import threading
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
@@ -13,7 +12,6 @@ import pandas as pd
 from docx import Document
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse
-from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 ROOT = Path(__file__).resolve().parent
@@ -22,14 +20,12 @@ MANIFEST = json.loads((ROOT / "manifest.json").read_text(encoding="utf-8"))
 DATASETS = set(MANIFEST["datasets"])
 MAX_UPLOAD_BYTES = 5 * 1024 * 1024
 MAX_UPLOAD_ROWS = 200
-MODEL_LOAD_LOCK = threading.Lock()
 
 app = FastAPI(
     title="TURBOSENSE",
     version=MANIFEST.get("version", "1.0.0"),
     description="NASA C-MAPSS RUL and health-state inference",
 )
-app.mount("/static", StaticFiles(directory=ROOT / "static"), name="static")
 
 
 class PredictionRequest(BaseModel):
@@ -49,16 +45,15 @@ def features_for(subset: str) -> list[str]:
 
 @lru_cache(maxsize=1)
 def load_bundle(subset: str):
-    with MODEL_LOAD_LOCK:
-        path = MODEL_DIR / f"{subset}_model.joblib"
-        if not path.is_file():
-            raise FileNotFoundError(f"Model artifact not found: {path.name}")
-        bundle = joblib.load(path)
-        required = {"regressor", "classifier", "features", "rul_cap"}
-        if not required.issubset(bundle):
-            missing = sorted(required - set(bundle))
-            raise RuntimeError(f"{path.name} is not a combined TURBOSENSE artifact; missing keys: {missing}")
-        return bundle
+    path = MODEL_DIR / f"{subset}_model.joblib"
+    if not path.is_file():
+        raise FileNotFoundError(f"Model artifact not found: {path.name}")
+    bundle = joblib.load(path)
+    required = {"regressor", "classifier", "features", "rul_cap"}
+    if not required.issubset(bundle):
+        missing = sorted(required - set(bundle))
+        raise RuntimeError(f"{path.name} is not a combined TURBOSENSE artifact; missing keys: {missing}")
+    return bundle
 
 
 def docx_to_frame(content: bytes) -> pd.DataFrame:
@@ -253,11 +248,6 @@ def predict(request: PredictionRequest):
         bundle = load_bundle(subset)
     except FileNotFoundError as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
-    except MemoryError as exc:
-        raise HTTPException(
-            status_code=503,
-            detail=f"{subset} is temporarily unavailable because the model exceeded the service memory limit.",
-        ) from exc
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Could not load {subset} model bundle: {exc}") from exc
 
