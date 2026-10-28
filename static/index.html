@@ -121,6 +121,10 @@ const edaToggle=document.querySelector('#edaToggle');
 const edaClose=document.querySelector('#edaClose');
 const edaFolders=document.querySelector('#edaFolders');
 const edaGrid=document.querySelector('#edaGrid');
+const edaLightbox=document.querySelector('#edaLightbox');
+const edaLightboxImage=document.querySelector('#edaLightboxImage');
+const edaLightboxCaption=document.querySelector('#edaLightboxCaption');
+const edaLightboxClose=document.querySelector('#edaLightboxClose');
 let manifest=null;
 let activeMode='manual';
 let uploadedRows=null;
@@ -149,15 +153,33 @@ function renderEdaGraphs(){
   for(const filename of edaGraphs[activeEdaFolder]){
     const figure=document.createElement('figure');
     figure.className='eda-card';
+    figure.tabIndex=0;
+    figure.setAttribute('role','button');
+    figure.setAttribute('aria-label','Open '+filename.replace('.png','').replaceAll('_',' ')+' preview');
     const image=document.createElement('img');
     image.src='/static/eda/'+activeEdaFolder+'/'+filename;
     image.alt=filename.replaceAll('_',' ').replace('.png','');
     image.loading='lazy';
     const caption=document.createElement('figcaption');
     caption.textContent=filename.replace('.png','').replaceAll('_',' ');
+    const openPreview=()=>{
+      edaLightboxImage.src=image.src;
+      edaLightboxImage.alt=image.alt;
+      edaLightboxCaption.textContent=caption.textContent;
+      edaLightbox.hidden=false;
+      edaLightboxClose.focus();
+    };
+    figure.addEventListener('click',openPreview);
+    figure.addEventListener('keydown',event=>{
+      if(event.key==='Enter'||event.key===' '){event.preventDefault();openPreview()}
+    });
     figure.append(image,caption);
     edaGrid.append(figure);
   }
+}
+function closeEdaPreview(){
+  edaLightbox.hidden=true;
+  edaLightboxImage.src='';
 }
 function openEda(){
   edaSection.hidden=false;
@@ -167,6 +189,9 @@ function openEda(){
 }
 edaToggle.addEventListener('click',event=>{event.preventDefault();openEda()});
 edaClose.addEventListener('click',()=>{edaSection.hidden=true});
+edaLightboxClose.addEventListener('click',closeEdaPreview);
+edaLightbox.addEventListener('click',event=>{if(event.target===edaLightbox)closeEdaPreview()});
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!edaLightbox.hidden)closeEdaPreview()});
 function setMode(mode){
   activeMode=mode;
   uploadedRows=null;
