@@ -6,7 +6,9 @@ import joblib
 
 ROOT = Path(__file__).resolve().parent
 MODEL_DIR = Path(os.getenv("MODEL_DIR", ROOT / "models"))
-KEEP_TREES = int(os.getenv("TURBOSENSE_KEEP_TREES", "64"))
+KEEP_TREES = int(os.getenv("TURBOSENSE_KEEP_TREES", "16"))
+if KEEP_TREES < 1:
+    raise ValueError("TURBOSENSE_KEEP_TREES must be at least 1")
 
 
 def compact_estimator(estimator, label: str) -> bool:
@@ -14,8 +16,12 @@ def compact_estimator(estimator, label: str) -> bool:
     if not estimators or len(estimators) <= KEEP_TREES:
         return False
 
-    step = max(1, len(estimators) // KEEP_TREES)
-    selected = list(estimators[::step])[:KEEP_TREES]
+    if KEEP_TREES == 1:
+        selected = [estimators[len(estimators) // 2]]
+    else:
+        last_index = len(estimators) - 1
+        indices = [round(i * last_index / (KEEP_TREES - 1)) for i in range(KEEP_TREES)]
+        selected = [estimators[index] for index in indices]
     estimator.estimators_ = selected
     estimator.n_estimators = len(selected)
     print(f"Compacted {label}: {len(estimators)} -> {len(selected)} trees")
@@ -23,6 +29,7 @@ def compact_estimator(estimator, label: str) -> bool:
 
 
 def compact_bundle(path: Path) -> None:
+    original_size = path.stat().st_size
     bundle = joblib.load(path)
     changed = False
     for key in ("regressor", "classifier"):
@@ -34,8 +41,16 @@ def compact_bundle(path: Path) -> None:
         temp = path.with_suffix(path.suffix + ".compact")
         joblib.dump(bundle, temp, compress=3)
         temp.replace(path)
+        print(
+            f"Saved {path.name}: {original_size:,} -> {path.stat().st_size:,} bytes"
+        )
 
 
-manifest = json.loads((ROOT / "manifest.json").read_text(encoding="utf-8"))
-for subset in manifest["datasets"]:
-    compact_bundle(MODEL_DIR / f"{subset}_model.joblib")
+def main() -> None:
+    manifest = json.loads((ROOT / "manifest.json").read_text(encoding="utf-8"))
+    for subset in manifest["datasets"]:
+        compact_bundle(MODEL_DIR / f"{subset}_model.joblib")
+
+
+if __name__ == "__main__":
+    main()

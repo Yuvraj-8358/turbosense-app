@@ -25,7 +25,7 @@ The prediction response contains estimated RUL cycles and a critical, warning, o
 
 ## Render configuration
 
-The checked-in render.yaml sets the Python version, Free plan, build command, start command, and /healthz health check. The build installs dependencies, downloads the model bundles from the configured GitHub Release, and compacts tree-ensemble bundles to 64 evenly sampled trees so FD002 and FD004 fit more reliably within the free instance memory limit.
+The checked-in render.yaml sets the Python version, Free plan, build command, start command, and /healthz health check. The build installs dependencies, downloads the model bundles from the configured GitHub Release, and compacts tree-ensemble bundles to 16 evenly sampled trees. Render reported that the previous 64-tree bundles exceeded its 512 MB free-instance memory limit during inference. The smaller forests are a memory-saving deployment compromise and should be rechecked against held-out evaluation metrics before the results are presented as model-performance evidence.
 
 Configure these environment variables in Render:
 

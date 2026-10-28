@@ -9,6 +9,8 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.13.16
+      - key: TURBOSENSE_KEEP_TREES
+        value: "16"
       - key: GITHUB_REPOSITORY
         sync: false
       - key: MODEL_RELEASE_TAG

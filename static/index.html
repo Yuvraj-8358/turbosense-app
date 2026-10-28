@@ -275,10 +275,14 @@ function showPredictions(data){
 async function responseData(response){
   const text=await response.text();
   if(!text.trim()){
-    throw Error(response.ok?'The server returned an empty response.':'The server did not return a readable error response. Try again after the service is ready.');
+    if(!response.ok&&response.status>=500)throw Error('The prediction service restarted or ran out of memory while loading this model. Wait about 30 seconds, then retry.');
+    throw Error(response.ok?'The server returned an empty response.':'The server did not return a readable error response.');
   }
   try{return JSON.parse(text)}
-  catch(error){throw Error(response.ok?'The server returned invalid JSON.':'The server returned an unreadable error response. Try again after the service is ready.')}
+  catch(error){
+    if(!response.ok&&response.status>=500)throw Error('The prediction service restarted or ran out of memory while loading this model. Wait about 30 seconds, then retry.');
+    throw Error(response.ok?'The server returned invalid JSON.':'The server returned an unreadable error response.')
+  }
 }
 async function parseUpload(file){
   const form=new FormData();
@@ -351,7 +355,7 @@ async function initialize(){
     if(!healthResponse.ok)throw Error('Health check failed.');
     if(!manifestResponse.ok)throw Error('Could not load the sensor manifest.');
     manifest=await responseData(manifestResponse);
-    statusEl.textContent=health.status==='ok'?'Models ready':'Model files missing';
+    statusEl.textContent=health.status==='ok'?'Model files found':'Model files missing';
     statusEl.classList.toggle('offline',health.status!=='ok');
     renderSensorFields();
   }catch(error){
